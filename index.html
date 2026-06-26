@@ -56,6 +56,11 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #74777F;
         }
+        @supports (padding-bottom: env(safe-area-inset-bottom)) {
+            .safe-bottom {
+                padding-bottom: calc(env(safe-area-inset-bottom) + 6px);
+            }
+        }
     </style>
 </head>
 <body class="bg-compound-background text-compound-emeraldDark h-full flex flex-col overflow-hidden select-none">
@@ -84,7 +89,7 @@
     <div class="flex-1 flex flex-col md:flex-row overflow-hidden">
         
         <!-- SIDEBAR/WIDGETS PANEL (Bento Grid Dashboard) -->
-        <aside class="w-full md:w-[380px] lg:w-[420px] bg-white border-l border-compound-border p-4 flex flex-col gap-4 overflow-y-auto shrink-0">
+        <aside id="aside-panel" class="w-full md:flex md:w-[380px] lg:w-[420px] bg-white border-l border-compound-border p-4 flex flex-col gap-4 overflow-y-auto shrink-0">
             <!-- HEADER -->
             <div class="flex justify-between items-center pb-2 border-b border-gray-100">
                 <h2 class="text-sm font-extrabold text-compound-slate flex items-center gap-1">
@@ -157,7 +162,7 @@
                         <span class="material-symbols-outlined text-base text-compound-emerald">badge</span>
                         دليل العمال المتاحين
                     </h3>
-                    <button onclick="switchTab(1)" class="text-[10px] text-compound-emerald font-bold hover:underline">عرض الكل</button>
+                    <button onclick="switchTab(2)" class="text-[10px] text-compound-emerald font-bold hover:underline">عرض الكل</button>
                 </div>
                 <!-- Dynamic Quick List of Workers -->
                 <div id="quick-workers-list" class="space-y-2">
@@ -167,23 +172,23 @@
         </aside>
 
         <!-- MAIN DATA DISPLAY COMPARTMENT -->
-        <main class="flex-1 flex flex-col overflow-hidden">
+        <main id="main-content" class="flex-1 hidden md:flex flex-col overflow-hidden">
             <!-- TABS & VIEW MODE CONTROLLER -->
             <div class="bg-white border-b border-compound-border px-4 py-2 flex items-center justify-between shrink-0">
                 <!-- Navigation Tabs -->
-                <div class="flex space-x-reverse space-x-2">
-                    <button id="tab-btn-tasks" onclick="switchTab(0)" class="px-4 py-2 text-xs sm:text-sm font-bold rounded-xl flex items-center gap-1.5 transition-all bg-compound-emerald text-white shadow-sm">
+                <div class="hidden md:flex space-x-reverse space-x-2">
+                    <button id="tab-btn-tasks" onclick="switchTab(1)" class="px-4 py-2 text-xs sm:text-sm font-bold rounded-xl flex items-center gap-1.5 transition-all bg-compound-emerald text-white shadow-sm">
                         <span class="material-symbols-outlined text-lg">assignment</span>
                         مهمات الصيانة المسجلة
                     </button>
-                    <button id="tab-btn-directory" onclick="switchTab(1)" class="px-4 py-2 text-xs sm:text-sm font-bold rounded-xl flex items-center gap-1.5 transition-all text-compound-slate hover:bg-slate-100">
+                    <button id="tab-btn-directory" onclick="switchTab(2)" class="px-4 py-2 text-xs sm:text-sm font-bold rounded-xl flex items-center gap-1.5 transition-all text-compound-slate hover:bg-slate-100">
                         <span class="material-symbols-outlined text-lg">contacts</span>
                         دليل الخدمات ومقدمي الصيانة
                     </button>
                 </div>
 
                 <!-- Active Filter/Search -->
-                <div class="relative w-40 sm:w-64">
+                <div class="relative w-full md:w-64">
                     <span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-lg">search</span>
                     <input id="search-bar" type="text" oninput="applyFilters()" placeholder="البحث..." class="w-full pr-8 pl-3 py-1.5 text-xs border border-compound-border rounded-xl focus:outline-none focus:ring-1 focus:ring-compound-emerald">
                 </div>
@@ -259,6 +264,22 @@
             </section>
         </main>
     </div>
+
+    <!-- MOBILE BOTTOM NAVIGATION -->
+    <nav class="md:hidden bg-white border-t border-compound-border flex items-center justify-around shrink-0 py-1 z-10 safe-bottom shadow-md">
+        <button id="mob-btn-dash" onclick="switchTab(0)" class="flex flex-col items-center justify-center flex-1 py-1.5 text-compound-emerald font-extrabold text-[10px] transition-colors">
+            <span class="material-symbols-outlined text-xl">grid_view</span>
+            <span>الرئيسية</span>
+        </button>
+        <button id="mob-btn-tasks" onclick="switchTab(1)" class="flex flex-col items-center justify-center flex-1 py-1.5 text-compound-slate font-medium text-[10px] transition-colors">
+            <span class="material-symbols-outlined text-xl">assignment</span>
+            <span>المهمات</span>
+        </button>
+        <button id="mob-btn-dir" onclick="switchTab(2)" class="flex flex-col items-center justify-center flex-1 py-1.5 text-compound-slate font-medium text-[10px] transition-colors">
+            <span class="material-symbols-outlined text-xl">contacts</span>
+            <span>الدليل</span>
+        </button>
+    </nav>
 
     <!-- ADD TASK MODAL DIALOG -->
     <div id="add-task-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -354,7 +375,7 @@
                 </button>
             </div>
             <!-- Modal Body -->
-            <form id="worker-form" onsubmit="handleAddWorker(event)" class="p-6 space-y-4">
+            <form id="worker-form" onsubmit="handleAddWorker(event)" class="p-6 space-y-4 overflow-y-auto max-h-[75vh]">
                 <!-- Name -->
                 <div>
                     <label class="block text-xs font-extrabold text-compound-slate mb-1">اسم مقدم الخدمة بالكامل *</label>
@@ -507,7 +528,7 @@
         // State variables
         let services = [];
         let tasks = [];
-        let activeTab = 0; // 0 = Tasks, 1 = Directory
+        let activeTab = 0; // 0 = Dashboard (mobile only), 1 = Tasks, 2 = Directory
 
         // App Initialization
         window.onload = function() {
@@ -523,9 +544,15 @@
             tasks = JSON.parse(localStorage.getItem('compound_tasks'));
 
             autoFillWorkers();
-            applyFilters();
             renderQuickWorkersList();
             updateStats();
+
+            // Responsive tab initializer
+            if (window.innerWidth < 768) {
+                switchTab(0); // Show Dashboard by default on mobile
+            } else {
+                switchTab(1); // Show Tasks by default on desktop
+            }
         };
 
         // Utility: Update stats counts in UI
@@ -542,24 +569,75 @@
         // Tab Switching Engine
         function switchTab(index) {
             activeTab = index;
+            
+            const asidePanel = document.getElementById('aside-panel');
+            const mainContent = document.getElementById('main-content');
+            
             const tabBtnTasks = document.getElementById('tab-btn-tasks');
             const tabBtnDir = document.getElementById('tab-btn-directory');
             const panelTasks = document.getElementById('tab-panel-tasks');
             const panelDir = document.getElementById('tab-panel-directory');
+            
+            const mobBtnDash = document.getElementById('mob-btn-dash');
+            const mobBtnTasks = document.getElementById('mob-btn-tasks');
+            const mobBtnDir = document.getElementById('mob-btn-dir');
+
+            // Reset mobile navigation icons styling
+            if (mobBtnDash) mobBtnDash.className = "flex flex-col items-center justify-center flex-1 py-1.5 text-compound-slate font-medium text-[10px] transition-colors";
+            if (mobBtnTasks) mobBtnTasks.className = "flex flex-col items-center justify-center flex-1 py-1.5 text-compound-slate font-medium text-[10px] transition-colors";
+            if (mobBtnDir) mobBtnDir.className = "flex flex-col items-center justify-center flex-1 py-1.5 text-compound-slate font-medium text-[10px] transition-colors";
 
             if (index === 0) {
-                // Tasks
-                tabBtnTasks.className = "px-4 py-2 text-xs sm:text-sm font-bold rounded-xl flex items-center gap-1.5 transition-all bg-compound-emerald text-white shadow-sm";
-                tabBtnDir.className = "px-4 py-2 text-xs sm:text-sm font-bold rounded-xl flex items-center gap-1.5 transition-all text-compound-slate hover:bg-slate-100";
+                // TAB 0: Dashboard (Mobile Only)
+                // Show aside panel, hide main content on mobile
+                asidePanel.classList.remove('hidden');
+                asidePanel.classList.add('flex');
+                
+                mainContent.classList.add('hidden');
+                mainContent.classList.remove('flex');
+                
+                // Active button coloring
+                if (mobBtnDash) mobBtnDash.className = "flex flex-col items-center justify-center flex-1 py-1.5 text-compound-emerald font-extrabold text-[10px] transition-colors";
+            } 
+            else if (index === 1) {
+                // TAB 1: Tasks List
+                // Hide aside panel, show main content on mobile
+                asidePanel.classList.add('hidden');
+                asidePanel.classList.remove('flex');
+                
+                mainContent.classList.remove('hidden');
+                mainContent.classList.add('flex');
+                
+                // Render Tasks view inside main
                 panelTasks.classList.remove('hidden');
                 panelDir.classList.add('hidden');
-            } else {
-                // Directory
-                tabBtnDir.className = "px-4 py-2 text-xs sm:text-sm font-bold rounded-xl flex items-center gap-1.5 transition-all bg-compound-emerald text-white shadow-sm";
-                tabBtnTasks.className = "px-4 py-2 text-xs sm:text-sm font-bold rounded-xl flex items-center gap-1.5 transition-all text-compound-slate hover:bg-slate-100";
+                
+                // Active styles for top tab buttons (desktop)
+                tabBtnTasks.className = "px-4 py-2 text-xs sm:text-sm font-bold rounded-xl flex items-center gap-1.5 transition-all bg-compound-emerald text-white shadow-sm";
+                tabBtnDir.className = "px-4 py-2 text-xs sm:text-sm font-bold rounded-xl flex items-center gap-1.5 transition-all text-compound-slate hover:bg-slate-100";
+                
+                if (mobBtnTasks) mobBtnTasks.className = "flex flex-col items-center justify-center flex-1 py-1.5 text-compound-emerald font-extrabold text-[10px] transition-colors";
+            } 
+            else if (index === 2) {
+                // TAB 2: Directory List
+                // Hide aside panel, show main content on mobile
+                asidePanel.classList.add('hidden');
+                asidePanel.classList.remove('flex');
+                
+                mainContent.classList.remove('hidden');
+                mainContent.classList.add('flex');
+                
+                // Render Directory view inside main
                 panelDir.classList.remove('hidden');
                 panelTasks.classList.add('hidden');
+                
+                // Active styles for top tab buttons (desktop)
+                tabBtnDir.className = "px-4 py-2 text-xs sm:text-sm font-bold rounded-xl flex items-center gap-1.5 transition-all bg-compound-emerald text-white shadow-sm";
+                tabBtnTasks.className = "px-4 py-2 text-xs sm:text-sm font-bold rounded-xl flex items-center gap-1.5 transition-all text-compound-slate hover:bg-slate-100";
+                
+                if (mobBtnDir) mobBtnDir.className = "flex flex-col items-center justify-center flex-1 py-1.5 text-compound-emerald font-extrabold text-[10px] transition-colors";
             }
+            
             applyFilters();
         }
 
@@ -648,7 +726,7 @@
         function applyFilters() {
             const query = document.getElementById('search-bar').value.toLowerCase();
 
-            if (activeTab === 0) {
+            if (activeTab === 0 || activeTab === 1) {
                 // Apply Filters to Tasks
                 const filterCat = document.getElementById('filter-category').value;
                 const filterStat = document.getElementById('filter-status').value;
