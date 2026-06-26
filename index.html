@@ -532,15 +532,47 @@
 
         // App Initialization
         window.onload = function() {
-            // Load from LocalStorage or seed defaults
-            if (!localStorage.getItem('compound_services')) {
-                localStorage.setItem('compound_services', JSON.stringify(DEFAULT_SERVICES));
+            // Load from LocalStorage or seed defaults with auto-synchronization
+            let storedServices = localStorage.getItem('compound_services');
+            if (!storedServices) {
+                services = [...DEFAULT_SERVICES];
+                localStorage.setItem('compound_services', JSON.stringify(services));
+            } else {
+                services = JSON.parse(storedServices);
+                let updated = false;
+                
+                // Auto-Sync: Add or update any predefined service provider in DEFAULT_SERVICES
+                DEFAULT_SERVICES.forEach(defSvc => {
+                    const existingSvc = services.find(s => s.name === defSvc.name && s.category === defSvc.category);
+                    if (!existingSvc) {
+                        const maxId = services.reduce((max, s) => s.id > max ? s.id : max, 0);
+                        services.push({
+                            id: maxId + 1,
+                            name: defSvc.name,
+                            category: defSvc.category,
+                            phone: defSvc.phone,
+                            description: defSvc.description
+                        });
+                        updated = true;
+                    } else {
+                        // Update existing default provider information if changed in code
+                        if (existingSvc.phone !== defSvc.phone || existingSvc.description !== defSvc.description) {
+                            existingSvc.phone = defSvc.phone;
+                            existingSvc.description = defSvc.description;
+                            updated = true;
+                        }
+                    }
+                });
+                
+                if (updated) {
+                    localStorage.setItem('compound_services', JSON.stringify(services));
+                }
             }
+
             if (!localStorage.getItem('compound_tasks')) {
                 localStorage.setItem('compound_tasks', JSON.stringify(DEFAULT_TASKS));
             }
 
-            services = JSON.parse(localStorage.getItem('compound_services'));
             tasks = JSON.parse(localStorage.getItem('compound_tasks'));
 
             autoFillWorkers();
