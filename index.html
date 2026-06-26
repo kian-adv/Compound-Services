@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوابة صيانة كمبوند الياسمين الفاخر</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        compound: {
+                            emerald: '#0061A4',       // Bento Blue Primary
+                            emeraldDark: '#001D36',   // Bento Deep Blue
+                            emeraldLight: '#00477D',  // Bento Medium Blue
+                            gold: '#6750A4',          // Purple/Lavender Accent
+                            goldDark: '#21005D',      // Deep Purple Text
+                            goldLight: '#EADDFF',     // Soft Lavender Background
+                            slate: '#44474E',         // Text Secondary
+                            slateLight: '#74777F',    // Text Muted
+                            background: '#F7F9FF',     // Light grayish blue background
+                            border: '#C3C7D0',        // Card border
+                        },
+                        successGreen: '#2E7D32',
+                        pendingOrange: '#E65100',
+                        progressBlue: '#1565C0',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+    <!-- Arabic Web Font (Cairo) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+        }
+        /* Custom scrollbar for clean webapp feel */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F7F9FF;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #C3C7D0;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #74777F;
+        }
+    </style>
+</head>
+<body class="bg-compound-background text-compound-emeraldDark h-full flex flex-col overflow-hidden select-none">
+
+    <!-- TOP PREMIUM HEADER -->
+    <header class="px-4 pt-6 pb-4 bg-white border-b border-compound-border flex items-center justify-between shadow-sm shrink-0 z-10">
+        <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-full bg-compound-emeraldDark flex items-center justify-center text-white border-2 border-compound-goldLight shadow-md">
+                <span class="material-symbols-outlined text-2xl text-yellow-400">home_work</span>
+            </div>
+            <div>
+                <h1 class="text-base sm:text-lg font-extrabold tracking-tight text-compound-emeraldDark">بوابة كمبوند الياسمين الفاخر</h1>
+                <p class="text-[10px] sm:text-xs text-compound-slate font-medium">نظام إدارة صيانة الخدمات السكنية التفاعلي</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-2">
+            <a href="tel:01030566078" class="flex items-center gap-1 bg-white border border-compound-border hover:bg-slate-50 transition-colors px-3 py-1.5 rounded-full text-xs font-bold text-compound-emeraldDark shadow-sm">
+                <span class="material-symbols-outlined text-base text-compound-emerald">call</span>
+                <span class="hidden sm:inline">اتصال بالمشرف:</span>
+                <span>01030566078</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- MAIN BODY SECTION -->
+    <div class="flex-1 flex flex-col md:flex-row overflow-hidden">
+        
+        <!-- SIDEBAR/WIDGETS PANEL (Bento Grid Dashboard) -->
+        <aside class="w-full md:w-[380px] lg:w-[420px] bg-white border-l border-compound-border p-4 flex flex-col gap-4 overflow-y-auto shrink-0">
+            <!-- HEADER -->
+            <div class="flex justify-between items-center pb-2 border-b border-gray-100">
+                <h2 class="text-sm font-extrabold text-compound-slate flex items-center gap-1">
+                    <span class="material-symbols-outlined text-lg text-compound-emerald">grid_view</span>
+                    لوحة التحكم التفاعلية
+                </h2>
+                <span class="text-[10px] font-bold bg-compound-emerald text-white px-2 py-0.5 rounded-full">Bento Theme</span>
+            </div>
+
+            <!-- STATS CARDS GRID -->
+            <div class="grid grid-cols-3 gap-2">
+                <div class="bg-orange-50 border border-orange-100 p-3 rounded-2xl flex flex-col items-center justify-center text-center shadow-sm">
+                    <span class="material-symbols-outlined text-orange-600 text-lg">hourglass_empty</span>
+                    <span id="stat-pending" class="text-xl font-black text-orange-700 mt-1">0</span>
+                    <span class="text-[10px] font-bold text-orange-800">قيد الانتظار</span>
+                </div>
+                <div class="bg-blue-50 border border-blue-100 p-3 rounded-2xl flex flex-col items-center justify-center text-center shadow-sm">
+                    <span class="material-symbols-outlined text-blue-600 text-lg">play_arrow</span>
+                    <span id="stat-active" class="text-xl font-black text-blue-700 mt-1">0</span>
+                    <span class="text-[10px] font-bold text-blue-800">قيد التنفيذ</span>
+                </div>
+                <div class="bg-green-50 border border-green-100 p-3 rounded-2xl flex flex-col items-center justify-center text-center shadow-sm">
+                    <span class="material-symbols-outlined text-successGreen text-lg">check_circle</span>
+                    <span id="stat-done" class="text-xl font-black text-successGreen mt-1">0</span>
+                    <span class="text-[10px] font-bold text-green-800">تم الإنجاز</span>
+                </div>
+            </div>
+
+            <!-- BENTO WIDGET 1: ADD NEW TASK (HERO CARD) -->
+            <button onclick="openModal('add-task-modal')" class="w-full text-right bg-gradient-to-br from-[#D1E4FF] to-[#E3EFFF] hover:shadow-md transition-all duration-300 rounded-[28px] p-5 flex flex-col justify-between border border-compound-border shadow-sm group">
+                <div class="flex justify-between items-start w-full">
+                    <div class="bg-compound-emerald text-white p-2.5 rounded-xl group-hover:scale-110 transition-transform">
+                        <span class="material-symbols-outlined block text-xl">send_to_mobile</span>
+                    </div>
+                    <span class="text-[9px] font-bold bg-compound-emerald text-white px-2.5 py-1 rounded-full uppercase tracking-wider">طلب فوري</span>
+                </div>
+                <div class="mt-8">
+                    <h2 class="text-lg font-bold text-[#001D36]">طلب صيانة جديد بالكمبوند</h2>
+                    <p class="text-xs text-compound-emeraldLight mt-1 font-medium leading-relaxed">أضف مهمة وقم بتعيين عامل صيانة (سباك، نجار، نقاش، حداد، كهربائي) لموقعك مباشرة</p>
+                </div>
+            </button>
+
+            <!-- BENTO WIDGET 2 & 3 SPLIT -->
+            <div class="grid grid-cols-2 gap-3">
+                <!-- WHATSAPP DIRECT BANNER -->
+                <a href="https://wa.me/201030566078?text=%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%20%D9%85%D8%B4%D8%B1%D9%81%20%D8%A7%D9%84%D8%B5%D9%8A%D8%A7%D9%86%D8%A9%D8%8C%20%D8%A3%D8%B1%D8%BA%D8%A8%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%A7%D8%B3%D8%AA%D9%81%D8%B3%D8%A7%D8%B1%20%D8%B9%D9%86%20%D8%AD%D8%A7%D9%84%D8%A9%20%D8%A7%D9%84%D8%B5%D9%8A%D8%A7%D9%86%D8%A9" target="_blank" class="bg-white border border-compound-border rounded-[28px] p-4 flex flex-col items-center justify-center text-center shadow-sm hover:bg-green-50 hover:border-green-300 transition-all group">
+                    <div class="w-12 h-12 rounded-full bg-[#E8F5E9] flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
+                        <svg class="w-6 h-6 text-successGreen fill-current" viewBox="0 0 24 24">
+                            <path d="M12.012 2c-5.506 0-9.989 4.478-9.99 9.984a9.96 9.96 0 001.333 4.993L2 22l5.233-1.371a9.936 9.936 0 004.777 1.21h.005c5.505 0 9.989-4.478 9.99-9.984A9.97 9.97 0 0012.012 2zm5.836 14.199c-.32.902-1.634 1.765-2.235 1.86-.543.085-1.257.106-3.14-.673-2.408-.992-3.924-3.428-4.045-3.587-.114-.162-.977-1.302-.977-2.484 0-1.183.621-1.763.839-2 .217-.238.48-.302.64-.302.162 0 .324.004.464.01.149.007.347-.057.545.422.203.492.695 1.692.756 1.815.06.123.102.266.02.43-.082.164-.123.266-.244.41-.122.143-.254.318-.365.429-.123.123-.253.256-.11.5.143.242.637 1.045 1.365 1.694.94.838 1.733 1.096 1.976 1.217.243.121.385.101.528-.063.143-.164.608-.707.77-1.01.163-.301.325-.251.548-.168.223.083 1.419.67 1.662.793.243.123.405.185.466.288.06.103.06.603-.26 1.505z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xs font-black text-compound-emeraldDark">تقرير الإنجاز</h3>
+                    <p class="text-[9px] text-compound-slate font-bold mt-1">واتساب مباشر للمشرف</p>
+                </a>
+
+                <!-- ADD SERVICE PROVIDER BANNER -->
+                <button onclick="openModal('add-worker-modal')" class="bg-compound-goldLight border border-compound-border rounded-[28px] p-4 flex flex-col items-center justify-center text-center shadow-sm hover:shadow-md hover:bg-[#e1d5fa] transition-all group">
+                    <div class="w-12 h-12 rounded-full bg-compound-goldDark flex items-center justify-center mb-2 text-white group-hover:scale-105 transition-transform">
+                        <span class="material-symbols-outlined text-2xl">add_business</span>
+                    </div>
+                    <h3 class="text-xs font-black text-compound-goldDark">إضافة مهني</h3>
+                    <p class="text-[9px] text-compound-goldDark opacity-90 font-bold mt-1">دليل الخدمات والعمال</p>
+                </button>
+            </div>
+
+            <!-- DIRECTORY MINI CARD -->
+            <div class="bg-gray-50 border border-compound-border rounded-[28px] p-4 flex flex-col justify-between shadow-sm">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-xs font-extrabold text-compound-slate flex items-center gap-1">
+                        <span class="material-symbols-outlined text-base text-compound-emerald">badge</span>
+                        دليل العمال المتاحين
+                    </h3>
+                    <button onclick="switchTab(1)" class="text-[10px] text-compound-emerald font-bold hover:underline">عرض الكل</button>
+                </div>
+                <!-- Dynamic Quick List of Workers -->
+                <div id="quick-workers-list" class="space-y-2">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN DATA DISPLAY COMPARTMENT -->
+        <main class="flex-1 flex flex-col overflow-hidden">
+            <!-- TABS & VIEW MODE CONTROLLER -->
+            <div class="bg-white border-b border-compound-border px-4 py-2 flex items-center justify-between shrink-0">
+                <!-- Navigation Tabs -->
+                <div class="flex space-x-reverse space-x-2">
+                    <button id="tab-btn-tasks" onclick="switchTab(0)" class="px-4 py-2 text-xs sm:text-sm font-bold rounded-xl flex items-center gap-1.5 transition-all bg-compound-emerald text-white shadow-sm">
+                        <span class="material-symbols-outlined text-lg">assignment</span>
+                        مهمات الصيانة المسجلة
+                    </button>
+                    <button id="tab-btn-directory" onclick="switchTab(1)" class="px-4 py-2 text-xs sm:text-sm font-bold rounded-xl flex items-center gap-1.5 transition-all text-compound-slate hover:bg-slate-100">
+                        <span class="material-symbols-outlined text-lg">contacts</span>
+                        دليل الخدمات ومقدمي الصيانة
+                    </button>
+                </div>
+
+                <!-- Active Filter/Search -->
+                <div class="relative w-40 sm:w-64">
+                    <span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-lg">search</span>
+                    <input id="search-bar" type="text" oninput="applyFilters()" placeholder="البحث..." class="w-full pr-8 pl-3 py-1.5 text-xs border border-compound-border rounded-xl focus:outline-none focus:ring-1 focus:ring-compound-emerald">
+                </div>
+            </div>
+
+            <!-- TAB 1: MAINTENANCE TASKS -->
+            <section id="tab-panel-tasks" class="flex-1 p-4 overflow-y-auto space-y-4">
+                <!-- Advanced Filter Controls -->
+                <div class="bg-white border border-compound-border rounded-2xl p-3 flex flex-wrap items-center justify-between gap-3 shadow-sm">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold text-compound-slate">التصنيف:</span>
+                        <select id="filter-category" onchange="applyFilters()" class="text-xs bg-gray-50 border border-compound-border rounded-lg px-2 py-1 focus:outline-none">
+                            <option value="الكل">الكل</option>
+                            <option value="سباك">سباك</option>
+                            <option value="نجار">نجار</option>
+                            <option value="حداد">حداد</option>
+                            <option value="نقاش">نقاش</option>
+                            <option value="كهربائي">كهربائي</option>
+                            <option value="منسق حدائق">منسق حدائق</option>
+                            <option value="أخرى">أخرى</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold text-compound-slate">الحالة:</span>
+                        <select id="filter-status" onchange="applyFilters()" class="text-xs bg-gray-50 border border-compound-border rounded-lg px-2 py-1 focus:outline-none">
+                            <option value="الكل">الكل</option>
+                            <option value="انتظار">انتظار</option>
+                            <option value="قيد التنفيذ">قيد التنفيذ</option>
+                            <option value="تم الإنجاز">تم الإنجاز</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold text-compound-slate">الأولوية:</span>
+                        <select id="filter-priority" onchange="applyFilters()" class="text-xs bg-gray-50 border border-compound-border rounded-lg px-2 py-1 focus:outline-none">
+                            <option value="الكل">الكل</option>
+                            <option value="عاجلة">عاجلة جداً</option>
+                            <option value="عادية">عادية</option>
+                            <option value="منخفضة">منخفضة</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Dynamic Tasks Feed -->
+                <div id="tasks-feed" class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                    <!-- Loaded dynamically via script -->
+                </div>
+
+                <!-- Empty state visual -->
+                <div id="tasks-empty-state" class="hidden flex flex-col items-center justify-center py-20 text-center">
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center text-gray-400 mb-4">
+                        <span class="material-symbols-outlined text-4xl">assignment_late</span>
+                    </div>
+                    <h3 class="text-base font-extrabold text-compound-slate">لا توجد مهمات صيانة مطابقة للبحث</h3>
+                    <p class="text-xs text-compound-slateLight mt-1 max-w-sm">اضغط على زر "طلب صيانة جديد" لإضافة وتكليف العاملين بمهمة صيانة جديدة بالكمبوند.</p>
+                </div>
+            </section>
+
+            <!-- TAB 2: SERVICE PROVIDERS DIRECTORY -->
+            <section id="tab-panel-directory" class="hidden flex-1 p-4 overflow-y-auto space-y-4">
+                <!-- Directory Cards Container -->
+                <div id="directory-feed" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                    <!-- Loaded dynamically via script -->
+                </div>
+
+                <!-- Empty state directory -->
+                <div id="directory-empty-state" class="hidden flex flex-col items-center justify-center py-20 text-center">
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center text-gray-400 mb-4">
+                        <span class="material-symbols-outlined text-4xl">engineering</span>
+                    </div>
+                    <h3 class="text-base font-extrabold text-compound-slate">دليل مقدمي الخدمات فارغ</h3>
+                    <p class="text-xs text-compound-slateLight mt-1 max-w-sm">أضف بعض مقدمي الصيانة (سباكين، نجارين، إلخ) لبناء دليل موثوق به للمقيمين.</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- ADD TASK MODAL DIALOG -->
+    <div id="add-task-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-[28px] w-full max-w-lg overflow-hidden border border-compound-border flex flex-col shadow-2xl animate-in fade-in zoom-in duration-200">
+            <!-- Modal Header -->
+            <div class="px-6 py-4 bg-compound-emerald text-white flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-xl">send_to_mobile</span>
+                    <h3 class="text-base font-bold">إرسال وتعيين مهمة صيانة جديدة</h3>
+                </div>
+                <button onclick="closeModal('add-task-modal')" class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors">
+                    <span class="material-symbols-outlined text-lg">close</span>
+                </button>
+            </div>
+            <!-- Modal Body -->
+            <form id="task-form" onsubmit="handleAddTask(event)" class="p-6 space-y-4 overflow-y-auto max-h-[75vh]">
+                <!-- Select Category -->
+                <div>
+                    <label class="block text-xs font-extrabold text-compound-slate mb-1">تخصص الصيانة المطلوبة *</label>
+                    <select id="task-input-category" onchange="autoFillWorkers()" class="w-full bg-gray-50 border border-compound-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-compound-emerald" required>
+                        <option value="" disabled selected>اختر التخصص...</option>
+                        <option value="سباك">سباك (سباكة ومواسير ومحابس)</option>
+                        <option value="نجار">نجار (أبواب ونوافذ ومطابخ)</option>
+                        <option value="حداد">حداد (بوابات ومظلات حديدية)</option>
+                        <option value="نقاش">نقاش (دهانات وتشطيبات)</option>
+                        <option value="كهربائي">كهربائي (أعطال وتوصيلات الكهرباء)</option>
+                        <option value="منسق حدائق">منسق حدائق (تشذيب وتنسيق المزورعات)</option>
+                        <option value="أخرى">أخرى (صيانة عامة بالكمبوند)</option>
+                    </select>
+                </div>
+
+                <!-- Select Worker dynamically -->
+                <div>
+                    <label class="block text-xs font-extrabold text-compound-slate mb-1">تعيين عامل الصيانة المسؤول</label>
+                    <select id="task-input-worker" class="w-full bg-gray-50 border border-compound-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-compound-emerald">
+                        <option value="">-- تفويض بدون تعيين محدد --</option>
+                    </select>
+                </div>
+
+                <!-- Input Location -->
+                <div>
+                    <label class="block text-xs font-extrabold text-compound-slate mb-1">موقع الصيانة بالكمبوند *</label>
+                    <input id="task-input-location" type="text" placeholder="مثال: فيلا 14A، شارع الياسمين 2" class="w-full bg-gray-50 border border-compound-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-compound-emerald" required>
+                </div>
+
+                <!-- Input Details -->
+                <div>
+                    <label class="block text-xs font-extrabold text-compound-slate mb-1">تفاصيل وملاحظات المهمة *</label>
+                    <textarea id="task-input-details" placeholder="مثال: تسريب مياه من المحبس الرئيسي في الحديقة الخارجية يحتاج لتغيير فوري" rows="3" class="w-full bg-gray-50 border border-compound-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-compound-emerald" required></textarea>
+                </div>
+
+                <!-- Priority Segmented Button -->
+                <div>
+                    <label class="block text-xs font-extrabold text-compound-slate mb-1.5">درجة الأولوية والأهمية</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <label class="border border-compound-border rounded-xl p-2 flex items-center justify-center gap-1 cursor-pointer text-xs font-bold hover:bg-slate-50 transition-colors">
+                            <input type="radio" name="task-priority" value="منخفضة" class="accent-compound-emerald">
+                            منخفضة
+                        </label>
+                        <label class="border border-compound-border rounded-xl p-2 flex items-center justify-center gap-1 cursor-pointer text-xs font-bold hover:bg-slate-50 transition-colors">
+                            <input type="radio" name="task-priority" value="عادية" checked class="accent-compound-emerald">
+                            عادية
+                        </label>
+                        <label class="border border-red-200 rounded-xl p-2 flex items-center justify-center gap-1 cursor-pointer text-xs font-bold text-red-700 bg-red-50 hover:bg-red-100 transition-colors">
+                            <input type="radio" name="task-priority" value="عاجلة" class="accent-red-600">
+                            عاجلة جداً
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Action Button -->
+                <div class="pt-2">
+                    <button type="submit" class="w-full bg-compound-emerald hover:bg-compound-emeraldDark text-white font-extrabold py-3 px-4 rounded-xl shadow-md transition-all text-sm flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-lg">check_circle</span>
+                        إرسال وتعميم مهمة الصيانة
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ADD WORKER/SERVICE PROVIDER MODAL DIALOG -->
+    <div id="add-worker-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-[28px] w-full max-w-lg overflow-hidden border border-compound-border flex flex-col shadow-2xl animate-in fade-in zoom-in duration-200">
+            <!-- Modal Header -->
+            <div class="px-6 py-4 bg-compound-goldDark text-white flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-xl">add_business</span>
+                    <h3 class="text-base font-bold text-compound-goldLight">إضافة مقدم خدمة صيانة جديد</h3>
+                </div>
+                <button onclick="closeModal('add-worker-modal')" class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors">
+                    <span class="material-symbols-outlined text-lg">close</span>
+                </button>
+            </div>
+            <!-- Modal Body -->
+            <form id="worker-form" onsubmit="handleAddWorker(event)" class="p-6 space-y-4">
+                <!-- Name -->
+                <div>
+                    <label class="block text-xs font-extrabold text-compound-slate mb-1">اسم مقدم الخدمة بالكامل *</label>
+                    <input id="worker-input-name" type="text" placeholder="مثال: الأسطى حسن السباك" class="w-full bg-gray-50 border border-compound-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-compound-gold" required>
+                </div>
+
+                <!-- Select Category -->
+                <div>
+                    <label class="block text-xs font-extrabold text-compound-slate mb-1">التخصص والمهنة الرئيسية *</label>
+                    <select id="worker-input-category" class="w-full bg-gray-50 border border-compound-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-compound-gold" required>
+                        <option value="" disabled selected>اختر التخصص والمهنة...</option>
+                        <option value="سباك">سباك (أعمال السباكة والصرف)</option>
+                        <option value="نجار">نجار (أبواب وأثاث وديكورات)</option>
+                        <option value="حداد">حداد (بوابات وحمايات حديدية)</option>
+                        <option value="نقاش">نقاش (أعمال الدهانات والمشغولات)</option>
+                        <option value="كهربائي">كهربائي (شبكات الكهرباء والأعطال)</option>
+                        <option value="منسق حدائق">منسق حدائق (تنسيق الزروع والمسطحات)</option>
+                        <option value="أخرى">تخصصات أخرى عامة</option>
+                    </select>
+                </div>
+
+                <!-- Input Phone -->
+                <div>
+                    <label class="block text-xs font-extrabold text-compound-slate mb-1">رقم الهاتف (الواتساب والمكالمات) *</label>
+                    <input id="worker-input-phone" type="tel" placeholder="مثال: 01030566078" class="w-full bg-gray-50 border border-compound-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-compound-gold" required>
+                </div>
+
+                <!-- Description -->
+                <div>
+                    <label class="block text-xs font-extrabold text-compound-slate mb-1">نبذة قصيرة وتفاصيل الخبرة</label>
+                    <input id="worker-input-desc" type="text" placeholder="مثال: خبرة 15 سنة في تركيب شبكات المياه وصيانة الفلل الفاخرة" class="w-full bg-gray-50 border border-compound-border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-compound-gold">
+                </div>
+
+                <!-- Action Button -->
+                <div class="pt-2">
+                    <button type="submit" class="w-full bg-compound-goldDark hover:bg-black text-white font-extrabold py-3 px-4 rounded-xl shadow-md transition-all text-sm flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-lg">check_circle</span>
+                        حفظ وإدراج مقدم الخدمة الجديد
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- STATUS CHANGER DIALOG MODAL -->
+    <div id="status-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-[28px] w-full max-w-md overflow-hidden border border-compound-border flex flex-col shadow-2xl animate-in fade-in zoom-in duration-200">
+            <!-- Modal Header -->
+            <div class="px-6 py-4 bg-compound-slate text-white flex justify-between items-center">
+                <h3 class="text-base font-bold">تحديث حالة وصيانة المهمة</h3>
+                <button onclick="closeModal('status-modal')" class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors">
+                    <span class="material-symbols-outlined text-lg">close</span>
+                </button>
+            </div>
+            <!-- Modal Body -->
+            <div class="p-6 space-y-4">
+                <p id="status-modal-task-title" class="text-xs font-extrabold text-compound-slate border-b border-gray-100 pb-2">المهمة:</p>
+                
+                <input type="hidden" id="status-modal-task-id">
+
+                <div>
+                    <label class="block text-xs font-bold text-compound-slate mb-1.5">تغيير حالة الصيانة الحالية:</label>
+                    <div class="space-y-2">
+                        <button onclick="updateTaskStatusDirectly('انتظار')" class="w-full text-right p-3 rounded-xl border border-gray-100 hover:bg-orange-50 hover:text-orange-800 transition-colors flex items-center justify-between text-xs font-extrabold">
+                            <span class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-orange-600"></span>
+                                قيد الانتظار والترقب
+                            </span>
+                            <span class="material-symbols-outlined text-base">chevron_left</span>
+                        </button>
+                        <button onclick="updateTaskStatusDirectly('قيد التنفيذ')" class="w-full text-right p-3 rounded-xl border border-gray-100 hover:bg-blue-50 hover:text-blue-800 transition-colors flex items-center justify-between text-xs font-extrabold">
+                            <span class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-blue-600"></span>
+                                قيد التنفيذ والعمل الفعلي
+                            </span>
+                            <span class="material-symbols-outlined text-base">chevron_left</span>
+                        </button>
+                        <button onclick="updateTaskStatusDirectly('تم الإنجاز')" class="w-full text-right p-3 rounded-xl border border-gray-100 hover:bg-green-50 hover:text-green-800 transition-colors flex items-center justify-between text-xs font-extrabold">
+                            <span class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-green-600"></span>
+                                تم الإنجاز وتسليم الموقع بالكامل
+                            </span>
+                            <span class="material-symbols-outlined text-base">chevron_left</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="pt-2 border-t border-gray-100 flex gap-2">
+                    <button onclick="deleteTaskDirectly()" class="flex-1 bg-red-50 text-red-700 hover:bg-red-100 font-extrabold py-2.5 rounded-xl transition-all text-xs flex items-center justify-center gap-1.5">
+                        <span class="material-symbols-outlined text-base">delete</span>
+                        حذف المهمة نهائياً
+                    </button>
+                    <button onclick="closeModal('status-modal')" class="flex-1 bg-gray-100 hover:bg-gray-200 text-compound-slate font-extrabold py-2.5 rounded-xl transition-all text-xs">
+                        إلغاء التغيير
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- JAVASCRIPT APPLICATION CORE -->
+    <script>
+        // Default Constants
+        const SUPERVISOR_NUMBER = "01030566078";
+
+        // Initial Data for Demo (to be persisted in LocalStorage)
+        const DEFAULT_SERVICES = [
+            { id: 1, name: "م. أحمد السباك", category: "سباك", phone: "01030566078", description: "خبير الصيانة والسباكة المعتمد بالكمبوند" },
+            { id: 2, name: "الأسطى محمد النقاش", category: "نقاش", phone: "01030566078", description: "أرقى دهانات الحوائط والديكورات الداخلية" },
+            { id: 3, name: "م. كريم النجار", category: "نجار", phone: "01030566078", description: "تصنيع وصيانة جميع المشغولات الخشبية والأبواب" },
+            { id: 4, name: "عاصم الكهربائي", category: "كهربائي", phone: "01030566078", description: "صيانة وتوصيل شبكات الكهرباء والإنارة بأمان" },
+            { id: 5, name: "الأسطى خالد الحداد", category: "حداد", phone: "01030566078", description: "أبواب حديدية وحمايات ومظلات بجودة عالية" },
+            { id: 6, name: "رأفت منسق الحدائق", category: "منسق حدائق", phone: "01030566078", description: "ترتيب وتنسيق الأشجار والمسطحات والزهور" }
+        ];
+
+        const DEFAULT_TASKS = [
+            {
+                id: 1,
+                category: "سباك",
+                worker: "م. أحمد السباك",
+                location: "فيلا 42B - شارع الياسمين 1",
+                details: "تسريب مياه متواصل من مخرج الغسالة الرئيسي بالدور الثاني يحتاج صيانة عاجلة لمنع الضرر بالأسقف.",
+                priority: "عاجلة",
+                status: "انتظار",
+                date: "26-06-2026"
+            },
+            {
+                id: 2,
+                category: "كهربائي",
+                worker: "عاصم الكهربائي",
+                location: "شقة 12 - عمارة 5 - الياسمين 3",
+                details: "ماس كهربائي خفيف في مفتاح المكيف الرئيسي بالصالة يحتاج للفحص والتبديل.",
+                priority: "عاجلة",
+                status: "قيد التنفيذ",
+                date: "26-06-2026"
+            },
+            {
+                id: 3,
+                category: "نجار",
+                worker: "م. كريم النجار",
+                location: "فيلا 10 - الياسمين 2",
+                details: "ضبط مفصلات باب المدخل الرئيسي الخشبي الخارجي وتزييتها ليغلق بإحكام.",
+                priority: "منخفضة",
+                status: "تم الإنجاز",
+                date: "25-06-2026"
+            }
+        ];
+
+        // State variables
+        let services = [];
+        let tasks = [];
+        let activeTab = 0; // 0 = Tasks, 1 = Directory
+
+        // App Initialization
+        window.onload = function() {
+            // Load from LocalStorage or seed defaults
+            if (!localStorage.getItem('compound_services')) {
+                localStorage.setItem('compound_services', JSON.stringify(DEFAULT_SERVICES));
+            }
+            if (!localStorage.getItem('compound_tasks')) {
+                localStorage.setItem('compound_tasks', JSON.stringify(DEFAULT_TASKS));
+            }
+
+            services = JSON.parse(localStorage.getItem('compound_services'));
+            tasks = JSON.parse(localStorage.getItem('compound_tasks'));
+
+            autoFillWorkers();
+            applyFilters();
+            renderQuickWorkersList();
+            updateStats();
+        };
+
+        // Utility: Update stats counts in UI
+        function updateStats() {
+            const pending = tasks.filter(t => t.status === "انتظار").length;
+            const active = tasks.filter(t => t.status === "قيد التنفيذ").length;
+            const done = tasks.filter(t => t.status === "تم الإنجاز").length;
+
+            document.getElementById('stat-pending').innerText = pending;
+            document.getElementById('stat-active').innerText = active;
+            document.getElementById('stat-done').innerText = done;
+        }
+
+        // Tab Switching Engine
+        function switchTab(index) {
+            activeTab = index;
+            const tabBtnTasks = document.getElementById('tab-btn-tasks');
+            const tabBtnDir = document.getElementById('tab-btn-directory');
+            const panelTasks = document.getElementById('tab-panel-tasks');
+            const panelDir = document.getElementById('tab-panel-directory');
+
+            if (index === 0) {
+                // Tasks
+                tabBtnTasks.className = "px-4 py-2 text-xs sm:text-sm font-bold rounded-xl flex items-center gap-1.5 transition-all bg-compound-emerald text-white shadow-sm";
+                tabBtnDir.className = "px-4 py-2 text-xs sm:text-sm font-bold rounded-xl flex items-center gap-1.5 transition-all text-compound-slate hover:bg-slate-100";
+                panelTasks.classList.remove('hidden');
+                panelDir.classList.add('hidden');
+            } else {
+                // Directory
+                tabBtnDir.className = "px-4 py-2 text-xs sm:text-sm font-bold rounded-xl flex items-center gap-1.5 transition-all bg-compound-emerald text-white shadow-sm";
+                tabBtnTasks.className = "px-4 py-2 text-xs sm:text-sm font-bold rounded-xl flex items-center gap-1.5 transition-all text-compound-slate hover:bg-slate-100";
+                panelDir.classList.remove('hidden');
+                panelTasks.classList.add('hidden');
+            }
+            applyFilters();
+        }
+
+        // Open and Close Modals helper
+        function openModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        // Fill workers selection in Task Form based on selected category
+        function autoFillWorkers() {
+            const categorySelect = document.getElementById('task-input-category').value;
+            const workerSelect = document.getElementById('task-input-worker');
+            
+            // Clear current options except the first
+            workerSelect.innerHTML = '<option value="">-- تفويض بدون تعيين محدد --</option>';
+
+            // Filter workers matching category
+            const filtered = services.filter(w => w.category === categorySelect);
+            filtered.forEach(w => {
+                const opt = document.createElement('option');
+                opt.value = w.name;
+                opt.innerText = w.name;
+                workerSelect.appendChild(opt);
+            });
+        }
+
+        // Render Quick Worker view on Bento sidebar
+        function renderQuickWorkersList() {
+            const container = document.getElementById('quick-workers-list');
+            container.innerHTML = '';
+
+            // Show first 3 workers for quick view
+            services.slice(0, 3).forEach(w => {
+                let icon = getCategoryIconName(w.category);
+                let colorClass = getCategoryBgAndColor(w.category);
+
+                container.innerHTML += `
+                    <div class="flex items-center justify-between p-2.5 rounded-2xl bg-gray-100 hover:bg-gray-200 transition-colors">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-8 h-8 rounded-full ${colorClass} flex items-center justify-center">
+                                <span class="material-symbols-outlined text-sm">${icon}</span>
+                            </div>
+                            <div>
+                                <p class="text-xs font-extrabold text-compound-emeraldDark">${w.name}</p>
+                                <p class="text-[9px] text-compound-slate font-medium">${w.category} صيانة الكمبوند</p>
+                            </div>
+                        </div>
+                        <a href="tel:${w.phone}" class="w-8 h-8 rounded-full bg-white text-compound-emerald hover:bg-compound-emeraldLight hover:text-white transition-colors flex items-center justify-center border border-gray-200">
+                            <span class="material-symbols-outlined text-base">call</span>
+                        </a>
+                    </div>
+                `;
+            });
+        }
+
+        // Render functions for categories
+        function getCategoryIconName(cat) {
+            switch(cat) {
+                case "سباك": return "build";
+                case "نجار": return "handyman";
+                case "حداد": return "construction";
+                case "نقاش": return "brush";
+                case "كهربائي": return "bolt";
+                case "منسق حدائق": return "potted_plant";
+                default: return "engineering";
+            }
+        }
+
+        function getCategoryBgAndColor(cat) {
+            switch(cat) {
+                case "سباك": return "bg-blue-100 text-blue-700";
+                case "نجار": return "bg-amber-100 text-amber-700";
+                case "حداد": return "bg-gray-200 text-gray-700";
+                case "نقاش": return "bg-purple-100 text-purple-700";
+                case "كهربائي": return "bg-yellow-100 text-yellow-700";
+                case "منسق حدائق": return "bg-green-100 text-green-700";
+                default: return "bg-slate-100 text-slate-700";
+            }
+        }
+
+        // Filter and Render Task & Directory views
+        function applyFilters() {
+            const query = document.getElementById('search-bar').value.toLowerCase();
+
+            if (activeTab === 0) {
+                // Apply Filters to Tasks
+                const filterCat = document.getElementById('filter-category').value;
+                const filterStat = document.getElementById('filter-status').value;
+                const filterPrio = document.getElementById('filter-priority').value;
+
+                let filteredTasks = tasks.filter(t => {
+                    const matchesSearch = t.location.toLowerCase().includes(query) || t.details.toLowerCase().includes(query) || t.worker.toLowerCase().includes(query);
+                    const matchesCat = filterCat === "الكل" || t.category === filterCat;
+                    const matchesStat = filterStat === "الكل" || t.status === filterStat;
+                    const matchesPrio = filterPrio === "الكل" || t.priority === filterPrio;
+                    return matchesSearch && matchesCat && matchesStat && matchesPrio;
+                });
+
+                renderTasks(filteredTasks);
+            } else {
+                // Apply Filters to Directory
+                let filteredWorkers = services.filter(w => {
+                    return w.name.toLowerCase().includes(query) || w.category.toLowerCase().includes(query) || w.description.toLowerCase().includes(query);
+                });
+
+                renderDirectory(filteredWorkers);
+            }
+        }
+
+        // Render Tasks Grid View
+        function renderTasks(items) {
+            const feed = document.getElementById('tasks-feed');
+            const emptyState = document.getElementById('tasks-empty-state');
+
+            if (items.length === 0) {
+                feed.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            feed.innerHTML = '';
+
+            items.forEach(t => {
+                let priorityBadge = '';
+                if (t.priority === "عاجلة") {
+                    priorityBadge = `<span class="bg-red-50 text-red-600 border border-red-200 px-2.5 py-1 rounded-full text-[10px] font-black">عاجلة جداً</span>`;
+                } else if (t.priority === "منخفضة") {
+                    priorityBadge = `<span class="bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full text-[10px] font-black">منخفضة الأولوية</span>`;
+                } else {
+                    priorityBadge = `<span class="bg-blue-50 text-blue-600 border border-blue-100 px-2.5 py-1 rounded-full text-[10px] font-black">عادية</span>`;
+                }
+
+                let statusBadge = '';
+                let borderClass = '';
+                if (t.status === "انتظار") {
+                    statusBadge = `<span class="inline-flex items-center gap-1.5 bg-orange-50 text-orange-700 border border-orange-200 px-3 py-1 rounded-full text-xs font-black"><span class="w-2 h-2 rounded-full bg-orange-600"></span>قيد الانتظار</span>`;
+                    borderClass = 'border-l-4 border-l-orange-500';
+                } else if (t.status === "قيد التنفيذ") {
+                    statusBadge = `<span class="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 border border-blue-200 px-3 py-1 rounded-full text-xs font-black"><span class="w-2 h-2 rounded-full bg-blue-600"></span>قيد العمل فوري</span>`;
+                    borderClass = 'border-l-4 border-l-blue-500';
+                } else {
+                    statusBadge = `<span class="inline-flex items-center gap-1.5 bg-green-50 text-successGreen border border-green-200 px-3 py-1 rounded-full text-xs font-black"><span class="w-2 h-2 rounded-full bg-successGreen"></span>تم الإنجاز</span>`;
+                    borderClass = 'border-l-4 border-l-green-600';
+                }
+
+                let icon = getCategoryIconName(t.category);
+                let colorClass = getCategoryBgAndColor(t.category);
+
+                feed.innerHTML += `
+                    <div class="bg-white border border-compound-border ${borderClass} rounded-[28px] p-5 shadow-sm hover:shadow-md transition-shadow relative">
+                        <div class="flex items-start justify-between gap-2 mb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-2xl ${colorClass} flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-lg">${icon}</span>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] font-bold text-compound-slate tracking-wide uppercase">${t.category} صيانة</span>
+                                    <h4 class="text-sm font-black text-compound-emeraldDark">${t.location}</h4>
+                                </div>
+                            </div>
+                            <div class="flex flex-col items-end gap-1.5">
+                                ${statusBadge}
+                                ${priorityBadge}
+                            </div>
+                        </div>
+
+                        <p class="text-xs text-compound-slate font-bold leading-relaxed bg-slate-50 border border-slate-100 p-3.5 rounded-2xl mb-4 whitespace-pre-line">${t.details}</p>
+
+                        <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-gray-100">
+                            <div class="flex items-center gap-2">
+                                <div class="w-7 h-7 rounded-full bg-compound-goldLight flex items-center justify-center text-compound-emerald text-xs">👤</div>
+                                <div>
+                                    <p class="text-[10px] text-gray-400 font-bold leading-none">العامل المكلف:</p>
+                                    <p class="text-xs font-bold text-compound-goldDark mt-0.5">${t.worker || "بانتظار تكليف مهني"}</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-1.5">
+                                <button onclick="openStatusChanger(${t.id}, '${t.location}')" class="bg-white border border-compound-border hover:bg-slate-50 hover:border-compound-emerald text-compound-emerald font-black py-2 px-3 rounded-xl text-xs flex items-center gap-1 transition-all">
+                                    <span class="material-symbols-outlined text-sm">edit</span>
+                                    تعديل الحالة
+                                </button>
+                                <a href="https://wa.me/201030566078?text=%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%D8%8C%20%D8%A3%D9%88%D8%AF%20%D8%A7%D9%84%D8%A7%D8%B3%D8%AA%D9%81%D8%B3%D8%A7%D8%B1%20%D8%B9%D9%86%20%D9%85%D9%87%D9%85%D8%A9%20%D8%A7%D9%84%D8%B5%D9%8A%D8%A7%D9%86%D8%A9%20%D9%81%D9%8A%20${encodeURIComponent(t.location)}" target="_blank" class="bg-[#E8F5E9] hover:bg-green-100 text-successGreen border border-green-200 font-black p-2 rounded-xl text-xs flex items-center justify-center transition-all">
+                                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                                        <path d="M12.012 2c-5.506 0-9.989 4.478-9.99 9.984a9.96 9.96 0 001.333 4.993L2 22l5.233-1.371a9.936 9.936 0 004.777 1.21h.005c5.505 0 9.989-4.478 9.99-9.984A9.97 9.97 0 0012.012 2zm5.836 14.199c-.32.902-1.634 1.765-2.235 1.86-.543.085-1.257.106-3.14-.673-2.408-.992-3.924-3.428-4.045-3.587-.114-.162-.977-1.302-.977-2.484 0-1.183.621-1.763.839-2 .217-.238.48-.302.64-.302.162 0 .324.004.464.01.149.007.347-.057.545.422.203.492.695 1.692.756 1.815.06.123.102.266.02.43-.082.164-.123.266-.244.41-.122.143-.254.318-.365.429-.123.123-.253.256-.11.5.143.242.637 1.045 1.365 1.694.94.838 1.733 1.096 1.976 1.217.243.121.385.101.528-.063.143-.164.608-.707.77-1.01.163-.301.325-.251.548-.168.223.083 1.419.67 1.662.793.243.123.405.185.466.288.06.103.06.603-.26 1.505z"/>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Render Directory view list
+        function renderDirectory(items) {
+            const feed = document.getElementById('directory-feed');
+            const emptyState = document.getElementById('directory-empty-state');
+
+            if (items.length === 0) {
+                feed.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            feed.innerHTML = '';
+
+            items.forEach(w => {
+                let icon = getCategoryIconName(w.category);
+                let colorClass = getCategoryBgAndColor(w.category);
+
+                feed.innerHTML += `
+                    <div class="bg-white border border-compound-border rounded-[28px] p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-10 h-10 rounded-2xl ${colorClass} flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-lg">${icon}</span>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] font-bold text-compound-slate tracking-wide uppercase">${w.category} صيانة</span>
+                                    <h4 class="text-sm font-black text-compound-emeraldDark">${w.name}</h4>
+                                </div>
+                            </div>
+                            <p class="text-xs text-compound-slate font-bold leading-relaxed bg-slate-50 border border-slate-100 p-3.5 rounded-xl mb-4 min-h-[50px]">${w.description || 'لا يوجد نبذة إضافية لهذا المهني بالكمبوند.'}</p>
+                        </div>
+
+                        <div class="flex items-center gap-2 border-t border-gray-100 pt-3">
+                            <span class="material-symbols-outlined text-sm text-gray-400">phone_iphone</span>
+                            <span class="text-xs font-mono text-gray-500 select-all">${w.phone}</span>
+                            <div class="mr-auto flex gap-1.5">
+                                <a href="tel:${w.phone}" class="w-8 h-8 rounded-xl bg-gray-100 hover:bg-compound-emerald hover:text-white text-compound-emerald transition-all flex items-center justify-center border border-gray-200">
+                                    <span class="material-symbols-outlined text-base">call</span>
+                                </a>
+                                <a href="https://wa.me/${w.phone}?text=%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%20%D9%85%D8%B4%D8%B1%D9%81%20%D8%A7%D9%84%D8%B5%D9%8A%D8%A7%D9%86%D8%A9" target="_blank" class="w-8 h-8 rounded-xl bg-green-50 hover:bg-successGreen hover:text-white text-successGreen transition-all flex items-center justify-center border border-green-200">
+                                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                                        <path d="M12.012 2c-5.506 0-9.989 4.478-9.99 9.984a9.96 9.96 0 001.333 4.993L2 22l5.233-1.371a9.936 9.936 0 004.777 1.21h.005c5.505 0 9.989-4.478 9.99-9.984A9.97 9.97 0 0012.012 2zm5.836 14.199c-.32.902-1.634 1.765-2.235 1.86-.543.085-1.257.106-3.14-.673-2.408-.992-3.924-3.428-4.045-3.587-.114-.162-.977-1.302-.977-2.484 0-1.183.621-1.763.839-2 .217-.238.48-.302.64-.302.162 0 .324.004.464.01.149.007.347-.057.545.422.203.492.695 1.692.756 1.815.06.123.102.266.02.43-.082.164-.123.266-.244.41-.122.143-.254.318-.365.429-.123.123-.253.256-.11.5.143.242.637 1.045 1.365 1.694.94.838 1.733 1.096 1.976 1.217.243.121.385.101.528-.063.143-.164.608-.707.77-1.01.163-.301.325-.251.548-.168.223.083 1.419.67 1.662.793.243.123.405.185.466.288.06.103.06.603-.26 1.505z"/>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Action: Submit task creation form
+        function handleAddTask(e) {
+            e.preventDefault();
+
+            const category = document.getElementById('task-input-category').value;
+            const worker = document.getElementById('task-input-worker').value;
+            const location = document.getElementById('task-input-location').value;
+            const details = document.getElementById('task-input-details').value;
+            const priority = document.querySelector('input[name="task-priority"]:checked').value;
+
+            const dateToday = new Date().toLocaleDateString('ar-EG', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+            const newTask = {
+                id: Date.now(),
+                category,
+                worker: worker || "بانتظار تكليف مهني",
+                location,
+                details,
+                priority,
+                status: "انتظار",
+                date: dateToday
+            };
+
+            tasks.unshift(newTask);
+            localStorage.setItem('compound_tasks', JSON.stringify(tasks));
+
+            closeModal('add-task-modal');
+            document.getElementById('task-form').reset();
+
+            // Notify user & reload
+            applyFilters();
+            updateStats();
+        }
+
+        // Action: Submit worker directory form
+        function handleAddWorker(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('worker-input-name').value;
+            const category = document.getElementById('worker-input-category').value;
+            const phone = document.getElementById('worker-input-phone').value;
+            const desc = document.getElementById('worker-input-desc').value;
+
+            const newWorker = {
+                id: Date.now(),
+                name,
+                category,
+                phone,
+                description: desc
+            };
+
+            services.unshift(newWorker);
+            localStorage.setItem('compound_services', JSON.stringify(services));
+
+            closeModal('add-worker-modal');
+            document.getElementById('worker-form').reset();
+
+            // Refresh UI
+            renderQuickWorkersList();
+            autoFillWorkers();
+            applyFilters();
+        }
+
+        // Status Changer flow
+        function openStatusChanger(id, location) {
+            document.getElementById('status-modal-task-id').value = id;
+            document.getElementById('status-modal-task-title').innerText = "الموقع: " + location;
+            openModal('status-modal');
+        }
+
+        function updateTaskStatusDirectly(newStatus) {
+            const id = parseInt(document.getElementById('status-modal-task-id').value);
+            const taskIdx = tasks.findIndex(t => t.id === id);
+
+            if (taskIdx > -1) {
+                tasks[taskIdx].status = newStatus;
+                localStorage.setItem('compound_tasks', JSON.stringify(tasks));
+                applyFilters();
+                updateStats();
+            }
+            closeModal('status-modal');
+        }
+
+        function deleteTaskDirectly() {
+            const id = parseInt(document.getElementById('status-modal-task-id').value);
+            tasks = tasks.filter(t => t.id !== id);
+            localStorage.setItem('compound_tasks', JSON.stringify(tasks));
+            applyFilters();
+            updateStats();
+            closeModal('status-modal');
+        }
+    </script>
+</body>
+</html>
